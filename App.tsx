@@ -8,6 +8,7 @@
 import React, {useEffect,useState} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
+  ImageBackground,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -30,6 +31,35 @@ import {
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
+
+
+
+function Toolbar({children, title}: SectionProps): JSX.Element {
+  const isDarkMode = useColorScheme() === 'dark';
+  return (
+    <View style={styles.sectionContainer}>
+      <Text
+        style={[
+          styles.sectionTitle,
+          {
+            color: isDarkMode ? Colors.white : Colors.black,
+          },
+        ]}>
+        {title}
+      </Text>
+      <Text
+        style={[
+          styles.sectionDescription,
+          {
+            color: isDarkMode ? Colors.white : Colors.dark,
+          },
+        ]}>
+        {children}
+      </Text>
+    </View>
+  );
+}
+
 
 function Section({children, title}: SectionProps): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -90,9 +120,9 @@ function TestApi():JSX.Element {
   }, []);
 
   return (
-    <Section>
+    <View style={styles.card}>
       {isLoading ? (
-        <Text>Ops. Estamos fora do ar. Error {data.message}</Text>
+        <Text>Carregando...</Text>
       ) : (
         <Text>{data.date}</Text>
         // <FlatList
@@ -105,7 +135,7 @@ function TestApi():JSX.Element {
         //   )}
         // />
       )}
-    </Section>
+    </View>
   );
 };
 
@@ -152,7 +182,7 @@ function TestApi():JSX.Element {
 
 
 
-
+const image = {uri:'src/img/background.jpg'};
 
 
 
@@ -160,7 +190,7 @@ function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.yellow : Colors.lighter,
+    backgroundColor: isDarkMode ? Colors.darkest : Colors.lighter,
   };
 
   return (
@@ -169,39 +199,41 @@ function App(): JSX.Element {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-      {/* <ScrollView
+       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}> */}
+        style={backgroundStyle}> 
 
-        {/* <View
-          style={{
+         <View
+          style={{flex:1,color:'red'},{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>  */}
-       
-          <Section title="Step One">
+          }}>  
+       <ImageBackground source={image} resizeMode="cover" style={styles.image}>
+         
+          <Toolbar title="Imagem do dia - NASA">
 
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
+           
      
         
-          </Section>
+          </Toolbar>
+           
           <TestApi/> 
 
           {/* <Section title="See Your Changes">
             <ReloadInstructions />
           </Section>
-          <Section title="Debug">
+          <Section tite="Debug">
             <DebugInstructions />
           </Section>
           <Section title="Learn More">
             Read the docs to discover what to do next: */}
 
-{/* 
+    </ImageBackground>
          </View> 
-      </ScrollView> */}
+      </ScrollView> 
     </SafeAreaView>
   );
 }
+//const { height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -209,8 +241,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: 25,
     fontWeight: '600',
+    color:'#F9E875'
+  },
+  red:{
+    color:'#F9E875'
   },
   sectionDescription: {
     marginTop: 8,
@@ -220,6 +256,23 @@ const styles = StyleSheet.create({
   highlight: {
     fontWeight: '700',
   },
+  image: {
+    flex: 1,
+    justifyContent: 'center'}
+    ,
+
+  card:{
+    backgroundColor: '#000000c0',
+    flex: 1,
+
+    fontSize:30,
+    color:'red',
+    justifyContent: 'flex-start',
+    flexDirection: 'column',
+    paddingTop:100,
+    marginTop: 20,
+    fontWeight:'800' // Replace by 20
+  }
 });
 
 export default App;
