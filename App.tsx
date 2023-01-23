@@ -33,6 +33,31 @@ type SectionProps = PropsWithChildren<{
 }>;
 
 
+function Footbar({children, title}: SectionProps): JSX.Element {
+  const isDarkMode = useColorScheme() === 'dark';
+  return (
+    <View style={styles.sectionContainer}>
+      <Text
+        style={[
+          styles.sectionTitle,
+          {
+            color: isDarkMode ? Colors.white : Colors.black,
+          },
+        ]}>
+        {title}
+      </Text>
+      <Text
+        style={[
+          styles.sectionDescription,
+          {
+            color: isDarkMode ? Colors.white : Colors.dark,
+          },
+        ]}>
+        {children}
+      </Text>
+    </View>
+  );
+}
 
 function Toolbar({children, title}: SectionProps): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -124,65 +149,24 @@ function TestApi():JSX.Element {
       {isLoading ? (
         <Text>Carregando...</Text>
       ) : (
-        <Text>{data.date}</Text>
-        // <FlatList
-        //   data={data}
-        //   keyExtractor={({id}) => id}
-        //   renderItem={({item}) => (
-        //     <Text>
-        //       {item.date}, {item}
-        //     </Text>
-        //   )}
-        // />
+        <Section>
+        <Text style={styles.resume}><Text style={styles.highlight}> Data: </Text>{(data.date.split('-').reverse()).join('/')}</Text>
+       {'\n'}
+       <Text style={styles.resume}><Text style={styles.highlight}> Resumo: </Text>{data.explanation}</Text>
+        </Section>
+
       )}
     </View>
   );
 };
 
 
-// function TestApi() {
-//   const [error, setError] = useState(null);
-//   const [isLoaded, setIsLoaded] = useState(false);
-//   const [items, setItems] = useState([]);
-
-//   // Note: the empty deps array [] means
-//   // this useEffect will run once
-//   // similar to componentDidMount()
-//   useEffect(() => {
-//     fetch("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY")
-//       .then(res => res.json())
-//       .then(
-//         (result) => {
-//           setIsLoaded(true);
-//           setItems(result);
-//         },
-//         // Note: it's important to handle errors here
-//         // instead of a catch() block so that we don't swallow
-//         // exceptions from actual bugs in components.
-//         (error) => {
-//           setIsLoaded(true);
-//           setError(error);
-//         }
-//       )
-//   }, [])
-
-//   if (error) {
-//     return <Text>Error: {error.message}</Text>;
-//   } else if (!isLoaded) {
-//     return <Text>Loading...</Text>;
-//   } else {
-//     return (
-//     <Text>foi</Text>
-//     );
-//   }
-// }
 
 
 
 
 
-
-const image = {uri:'src/img/background.jpg'};
+const image = {uri:'https://raw.githubusercontent.com/reinanbr/app_image_day/main/src/img/background.jpg'};
 
 
 
@@ -199,37 +183,32 @@ function App(): JSX.Element {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-       <ScrollView
+      <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}> 
-
-         <View
+      <View
           style={{flex:1,color:'red'},{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>  
+          <Toolbar title="Imagem do dia - NASA"/>
+    
+
+   
+                   
        <ImageBackground source={image} resizeMode="cover" style={styles.image}>
          
-          <Toolbar title="Imagem do dia - NASA">
 
-           
-     
-        
-          </Toolbar>
            
           <TestApi/> 
 
-          {/* <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section tite="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next: */}
 
     </ImageBackground>
-         </View> 
+
+
+  <Footbar/>
+      </View> 
       </ScrollView> 
+
     </SafeAreaView>
   );
 }
@@ -256,20 +235,26 @@ const styles = StyleSheet.create({
   highlight: {
     fontWeight: '700',
   },
+  resume:{
+    fontSize:11,
+  },
   image: {
-    flex: 1,
+  flex:1,
     justifyContent: 'center'}
     ,
 
   card:{
+    flex:1,
     backgroundColor: '#000000c0',
-    flex: 1,
+
 
     fontSize:30,
     color:'red',
     justifyContent: 'flex-start',
     flexDirection: 'column',
-    paddingTop:100,
+    paddingTop:0,
+    paddingBottom:20,
+    marginBottom:400,
     marginTop: 20,
     fontWeight:'800' // Replace by 20
   }
