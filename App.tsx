@@ -16,6 +16,8 @@ import {
   ActivityIndicator,
   FlatList,
   Text,
+  Image,
+  Dimensions,
   useColorScheme,
   View,
 } from 'react-native';
@@ -33,10 +35,25 @@ type SectionProps = PropsWithChildren<{
 }>;
 
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+
+
+
+
+
+
+
+
+
+
+
+
+
 function Footbar({children, title}: SectionProps): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   return (
-    <View style={styles.sectionContainer}>
+    <View style={styles.footer}>
       <Text
         style={[
           styles.sectionTitle,
@@ -58,6 +75,51 @@ function Footbar({children, title}: SectionProps): JSX.Element {
     </View>
   );
 }
+
+
+
+
+
+
+const getCurrentDate=()=>{
+ 
+  var date = new Date().getDate();
+  var month = new Date().getMonth() + 1;
+  var year = new Date().getFullYear();
+  var hour = new Date().getHours();
+  var minutes = new Date().getMinutes();
+  var seconds = new Date().getSeconds();
+  //Alert.alert(date + '-' + month + '-' + year);
+  // You can turn it in to your desired format
+  return {hour:hour,minutes:minutes,seconds:seconds};// hour + ':' + minutes + ':' + seconds;//format: d-m-y;
+}
+
+const Blink = (props: BlinkProps) => {
+  const [date, setIsShowingText] = useState(getCurrentDate());
+
+  useEffect(() => {
+    const toggle = setInterval(() => {
+      setIsShowingText(getCurrentDate());
+    }, 100);
+    //  if (date.seconds%10==0){
+    //   return 0;
+    //  }
+
+    return () => clearInterval(toggle);
+  });
+
+
+
+  return <Text style={styles.time}>{date.hour}:{date.minutes}:{date.seconds}</Text>;
+};
+
+
+
+
+
+
+
+
 
 function Toolbar({children, title}: SectionProps): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -89,7 +151,7 @@ function Toolbar({children, title}: SectionProps): JSX.Element {
 function Section({children, title}: SectionProps): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   return (
-    <View style={styles.sectionContainer}>
+    <View style={styles.footer}>
       <Text
         style={[
           styles.sectionTitle,
@@ -101,7 +163,7 @@ function Section({children, title}: SectionProps): JSX.Element {
       </Text>
       <Text
         style={[
-          styles.sectionDescription,
+          styles.footer,
           {
             color: isDarkMode ? Colors.light : Colors.dark,
           },
@@ -129,6 +191,7 @@ function TestApi():JSX.Element {
     try {
       const response = await fetch('https://api.nasa.gov/planetary/apod?api_key=sDNs8qATnAyQCkASC32NBbrJy7xMn4H4RnHRBm3O');
       const json = await response.json();
+
       setData(json);
       console.log(data);
       console.log('fui');
@@ -144,17 +207,27 @@ function TestApi():JSX.Element {
     getMovies();
   }, []);
 
+    var imageNasa = {uri:data.url};
+    console.log(imageNasa);
   return (
     <View style={styles.card}>
       {isLoading ? (
+        <View style={styles.screenLoading}>
         <Text>Carregando...</Text>
-      ) : (
+        </View>
+      ) : (<View>
+        <Image
+        style={styles.stretch}
+        source={imageNasa}
+      />
         <Section>
-        <Text style={styles.resume}><Text style={styles.highlight}> Data: </Text>{(data.date.split('-').reverse()).join('/')}</Text>
+        <Text style={styles.resume}><Text style={styles.highlight}> Nome: </Text>{data.title}</Text>
        {'\n'}
+        <Text style={styles.resume}><Text style={styles.highlight}> Dia: </Text>{(data.date.split('-').reverse()).join('/')}</Text>
+       {'\n\n'}
        <Text style={styles.resume}><Text style={styles.highlight}> Resumo: </Text>{data.explanation}</Text>
         </Section>
-
+        </View>
       )}
     </View>
   );
@@ -190,7 +263,7 @@ function App(): JSX.Element {
           style={{flex:1,color:'red'},{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>  
-          <Toolbar title="Imagem do dia - NASA"/>
+          <Toolbar title="Imagem do dia - NASA"><Blink/></Toolbar>
     
 
    
@@ -205,7 +278,7 @@ function App(): JSX.Element {
     </ImageBackground>
 
 
-  <Footbar/>
+  <Footbar style={styles.footer}><Text  style={styles.footer}><Text>Copyright ReinanBr@ReySfots 2021</Text></Text></Footbar>
       </View> 
       </ScrollView> 
 
@@ -216,7 +289,7 @@ function App(): JSX.Element {
 
 const styles = StyleSheet.create({
   sectionContainer: {
-    marginTop: 32,
+    marginTop: 12,
     paddingHorizontal: 24,
   },
   sectionTitle: {
@@ -228,7 +301,7 @@ const styles = StyleSheet.create({
     color:'#F9E875'
   },
   sectionDescription: {
-    marginTop: 8,
+    marginTop: 1,
     fontSize: 18,
     fontWeight: '400',
   },
@@ -240,6 +313,7 @@ const styles = StyleSheet.create({
   },
   image: {
   flex:1,
+  paddingBottom:windowHeight-650,
     justifyContent: 'center'}
     ,
 
@@ -252,11 +326,35 @@ const styles = StyleSheet.create({
     color:'red',
     justifyContent: 'flex-start',
     flexDirection: 'column',
-    paddingTop:0,
-    paddingBottom:20,
-    marginBottom:400,
-    marginTop: 20,
+    paddingTop:10,
+    paddingBottom:windowHeight - 700,
+    marginBottom:windowHeight - 650,
+    marginTop: 0,
     fontWeight:'800' // Replace by 20
+  },
+  stretch: {
+    width: 450,
+    height: 200,
+    marginBottom:10,
+    resizeMode: 'stretch',
+  },
+  time:{
+    fontSize:13,
+    paddingBottom:20,
+  },
+  footer:{
+    flex:1,
+    flexDirection: 'row',
+    justifyContent:'center',
+    textAlign:'left',
+    fontSize:12,
+    alignSelf: 'center',
+    paddingTop:10,
+    paddingBottom:20
+  },
+  screenLoading:{
+    paddingBottom:10,
+    marginBottom:windowHeight,
   }
 });
 
